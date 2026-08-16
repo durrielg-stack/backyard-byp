@@ -761,7 +761,7 @@ function Hero({
       <div className="byp-hero-glow" />
       <div className="byp-hero-grid">
         <div className="byp-hero-copy">
-          { }
+          {}
           <div className="byp-hero-logo-row">
             <img
               className="byp-hero-logo"
