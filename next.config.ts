@@ -15,10 +15,12 @@ const CSP = [
   "upgrade-insecure-requests",
   // Next.js inline bootstrap + Botpress webchat injector
   "script-src 'self' 'unsafe-inline' https://cdn.botpress.cloud https://files.bpcontent.cloud",
-  // React style={} props are inline; no external stylesheet
-  "style-src 'self' 'unsafe-inline'",
-  // next/font self-hosts — no Google Fonts origin needed
-  "font-src 'self'",
+  // React style={} props are inline; Botpress webchat injects its own
+  // Google Fonts stylesheet (Inter) at runtime
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  // next/font self-hosts ours, but Botpress's injected stylesheet pulls
+  // its Inter font files from fonts.gstatic.com
+  "font-src 'self' https://fonts.gstatic.com",
   "img-src 'self' data: blob: https://*.botpress.cloud",
   "frame-src https://*.botpress.cloud",
   // Supabase REST + realtime, Botpress webchat, Vercel analytics beacon
