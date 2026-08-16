@@ -39,7 +39,7 @@ const SECURITY_HEADERS = [
   // includeSubDomains/preload — byp./pos. share the theserverprojectph.cc
   // apex and a preload directive here could have apex-wide consequences.
   { key: "Strict-Transport-Security", value: "max-age=86400" },
-  { key: "Content-Security-Policy-Report-Only", value: CSP },
+  { key: "Content-Security-Policy", value: CSP },
 ];
 
 const nextConfig: NextConfig = {
