@@ -1,0 +1,52 @@
+# CI — Backyard BYP (public tables page)
+#
+# This repo starts with zero pre-existing debt, so lint is blocking from
+# day one — unlike backyard-pos's CI, which runs lint non-blocking against
+# an inherited backlog. Also includes a daily schema-contract smoke test
+# (see src/lib/schema-contract.test.ts) since restaurant_tables/orders are
+# owned by the backyard-pos repo, not this one — drift there wouldn't
+# otherwise show up until someone notices the page is wrong.
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+  schedule:
+    - cron: "17 1 * * *" # ~09:17 PHT daily — catches schema drift from the POS repo
+
+jobs:
+  verify:
+    name: Typecheck, lint, format, unit tests, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Format check
+        run: npm run format:check
+
+      - name: Unit tests (Vitest) — includes daily schema-contract smoke test
+        run: npm test
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+      - name: Production build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
