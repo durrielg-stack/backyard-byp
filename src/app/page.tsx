@@ -463,6 +463,15 @@ function isClosedNow(date: Date): boolean {
   return false;
 }
 
+// Thursday is our busiest night and draws the most table-availability
+// inquiries, so the live grid renders only then — see CLAUDE.md.
+function isTableGridDay(date: Date): boolean {
+  const manila = new Date(
+    date.toLocaleString("en-US", { timeZone: "Asia/Manila" }),
+  );
+  return manila.getDay() === 4;
+}
+
 function relTime(ms: number): string {
   const s = Math.max(0, Math.round((Date.now() - ms) / 1000));
   if (s < 5) return "just now";
@@ -825,26 +834,31 @@ function SummaryCard({
 
   let statusContent: React.ReactNode;
   if (summary.open) {
-    // Restore when bar gets busier
-    // statusContent = (
-    //   <div className="byp-sum-number-row">
-    //     <span className="byp-sum-number">{summary.free}</span>
-    //     <span className="byp-sum-unit">{summary.free === 1 ? 'table' : 'tables'}<br/>available</span>
-    //   </div>
-    // )
-    const label =
-      summary.tone === "full"
-        ? "We're at Capacity"
-        : summary.tone === "almost"
-          ? "Party Vibes"
-          : summary.tone === "busy"
-            ? "Filling Up"
-            : "We're Open";
+    // Temporarily enabled for dev-byp testing — revert to the label block
+    // below once testing wraps.
     statusContent = (
       <div className="byp-sum-number-row">
-        <span className="byp-sum-number is-label">{label}</span>
+        <span className="byp-sum-number">{summary.free}</span>
+        <span className="byp-sum-unit">
+          {summary.free === 1 ? "table" : "tables"}
+          <br />
+          available
+        </span>
       </div>
     );
+    // const label =
+    //   summary.tone === "full"
+    //     ? "We're at Capacity"
+    //     : summary.tone === "almost"
+    //       ? "Party Vibes"
+    //       : summary.tone === "busy"
+    //         ? "Filling Up"
+    //         : "We're Open";
+    // statusContent = (
+    //   <div className="byp-sum-number-row">
+    //     <span className="byp-sum-number is-label">{label}</span>
+    //   </div>
+    // );
   } else if (preOpen?.label === "preparing") {
     statusContent = (
       <div className="byp-sum-number-row">
@@ -1587,7 +1601,9 @@ export default function TablesPage() {
         heroTitle={heroTitle}
       />
 
-      {/* <TablesSection tables={tables} /> */}
+      {/* Temporarily forced on for dev-byp testing — swap back to
+          `isTableGridDay(now) &&` once testing wraps. */}
+      <TablesSection tables={tables} />
       <MenuSection onZoom={onZoom} />
       <HoursSection openNow={summary.open} />
       <GallerySection />
