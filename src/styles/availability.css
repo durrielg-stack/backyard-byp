@@ -670,28 +670,37 @@ html.byp-hero-past .byp-hero-logo {
 }
 
 .byp-tables-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  --tables-cols: 2;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: clamp(8px, 1.2vw, 12px);
+}
+.byp-tables-grid > .byp-tile {
+  flex: 0 0
+    calc(
+      (100% - (var(--tables-cols) - 1) * clamp(8px, 1.2vw, 12px)) /
+        var(--tables-cols)
+    );
 }
 @media (min-width: 520px) {
   .byp-tables-grid {
-    grid-template-columns: repeat(3, 1fr);
+    --tables-cols: 3;
   }
 }
 @media (min-width: 780px) {
   .byp-tables-grid {
-    grid-template-columns: repeat(4, 1fr);
+    --tables-cols: 4;
   }
 }
 @media (min-width: 1040px) {
   .byp-tables-grid {
-    grid-template-columns: repeat(6, 1fr);
+    --tables-cols: 6;
   }
 }
 @media (min-width: 1280px) {
   .byp-tables-grid {
-    grid-template-columns: repeat(7, 1fr);
+    --tables-cols: 7;
   }
 }
 
