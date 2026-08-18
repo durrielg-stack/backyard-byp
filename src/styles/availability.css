@@ -698,11 +698,6 @@ html.byp-hero-past .byp-hero-logo {
     --tables-cols: 6;
   }
 }
-@media (min-width: 1280px) {
-  .byp-tables-grid {
-    --tables-cols: 7;
-  }
-}
 
 .byp-tile {
   border-radius: 12px;
