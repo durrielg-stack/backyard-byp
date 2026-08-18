@@ -834,31 +834,28 @@ function SummaryCard({
 
   let statusContent: React.ReactNode;
   if (summary.open) {
-    // Temporarily enabled for dev-byp testing — revert to the label block
-    // below once testing wraps.
+    const label =
+      summary.tone === "full"
+        ? "We're at Capacity"
+        : summary.tone === "almost"
+          ? "Party Vibes"
+          : summary.tone === "busy"
+            ? "Filling Up"
+            : "We're Open";
     statusContent = (
-      <div className="byp-sum-number-row">
-        <span className="byp-sum-number">{summary.free}</span>
-        <span className="byp-sum-unit">
-          {summary.free === 1 ? "table" : "tables"}
-          <br />
-          available
-        </span>
+      <div className="byp-sum-number-row byp-sum-row-open">
+        <span className="byp-sum-status-label">{label}</span>
+        <span className="byp-sum-divider-v" />
+        <div className="byp-sum-count-group">
+          <span className="byp-sum-number">{summary.free}</span>
+          <span className="byp-sum-unit">
+            {summary.free === 1 ? "table" : "tables"}
+            <br />
+            available
+          </span>
+        </div>
       </div>
     );
-    // const label =
-    //   summary.tone === "full"
-    //     ? "We're at Capacity"
-    //     : summary.tone === "almost"
-    //       ? "Party Vibes"
-    //       : summary.tone === "busy"
-    //         ? "Filling Up"
-    //         : "We're Open";
-    // statusContent = (
-    //   <div className="byp-sum-number-row">
-    //     <span className="byp-sum-number is-label">{label}</span>
-    //   </div>
-    // );
   } else if (preOpen?.label === "preparing") {
     statusContent = (
       <div className="byp-sum-number-row">

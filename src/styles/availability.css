@@ -476,6 +476,32 @@ html.byp-hero-past .byp-hero-logo {
   align-items: baseline;
   gap: 12px;
   margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.byp-sum-row-open {
+  align-items: center;
+  gap: 16px;
+}
+.byp-sum-status-label {
+  font-family: var(--font-oswald), sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.05rem, 2.5vw, 1.4rem);
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 1.15;
+  max-width: 9.5ch;
+  transition: color 600ms;
+}
+.byp-sum-divider-v {
+  width: 1px;
+  align-self: stretch;
+  background: var(--line);
+  flex-shrink: 0;
+}
+.byp-sum-count-group {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
 }
 .byp-sum-number {
   font-family: var(--font-oswald), sans-serif;
@@ -485,16 +511,20 @@ html.byp-hero-past .byp-hero-logo {
   letter-spacing: -0.01em;
   transition: color 600ms;
 }
-.byp-sum-card.st-open .byp-sum-number {
+.byp-sum-card.st-open .byp-sum-number,
+.byp-sum-card.st-open .byp-sum-status-label {
   color: var(--card-accent, var(--av));
 }
-.byp-sum-card.st-busy .byp-sum-number {
+.byp-sum-card.st-busy .byp-sum-number,
+.byp-sum-card.st-busy .byp-sum-status-label {
   color: var(--card-accent, var(--busy));
 }
-.byp-sum-card.st-almost .byp-sum-number {
+.byp-sum-card.st-almost .byp-sum-number,
+.byp-sum-card.st-almost .byp-sum-status-label {
   color: var(--card-accent, var(--gold));
 }
-.byp-sum-card.st-full .byp-sum-number {
+.byp-sum-card.st-full .byp-sum-number,
+.byp-sum-card.st-full .byp-sum-status-label {
   color: var(--card-accent, var(--copper));
 }
 .byp-sum-card.st-closed .byp-sum-number {
@@ -1438,16 +1468,20 @@ html.byp-hero-past .byp-hero-logo {
 }
 
 /* status card large label — same vibrant values as dark mode */
-.byp-page.byp-light .byp-sum-card.st-open .byp-sum-number {
+.byp-page.byp-light .byp-sum-card.st-open .byp-sum-number,
+.byp-page.byp-light .byp-sum-card.st-open .byp-sum-status-label {
   color: #6fbe85;
 }
-.byp-page.byp-light .byp-sum-card.st-busy .byp-sum-number {
+.byp-page.byp-light .byp-sum-card.st-busy .byp-sum-number,
+.byp-page.byp-light .byp-sum-card.st-busy .byp-sum-status-label {
   color: #4f9e65;
 }
-.byp-page.byp-light .byp-sum-card.st-almost .byp-sum-number {
+.byp-page.byp-light .byp-sum-card.st-almost .byp-sum-number,
+.byp-page.byp-light .byp-sum-card.st-almost .byp-sum-status-label {
   color: #e83e8c;
 }
-.byp-page.byp-light .byp-sum-card.st-full .byp-sum-number {
+.byp-page.byp-light .byp-sum-card.st-full .byp-sum-number,
+.byp-page.byp-light .byp-sum-card.st-full .byp-sum-status-label {
   color: #b45309;
 }
 .byp-page.byp-light .byp-sum-card.st-closed .byp-sum-number {
