@@ -1569,9 +1569,7 @@ export default function TablesPage() {
     return () => clearInterval(id);
   }, []);
 
-  // Temporarily forced open for dev-byp testing outside operating hours —
-  // revert to `isClosedNow(now)` once testing wraps.
-  const closed = false;
+  const closed = isClosedNow(now);
 
   const tables = useMemo(
     () =>
@@ -1618,9 +1616,7 @@ export default function TablesPage() {
         heroTitle={heroTitle}
       />
 
-      {/* Temporarily forced on for dev-byp testing — swap back to
-          `isTableGridDay(now) &&` once testing wraps. */}
-      <TablesSection tables={tables} />
+      {isTableGridDay(now) && <TablesSection tables={tables} />}
       <MenuSection onZoom={onZoom} />
       <HoursSection openNow={summary.open} />
       <GallerySection />
