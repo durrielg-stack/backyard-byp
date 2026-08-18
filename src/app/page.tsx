@@ -1554,7 +1554,9 @@ export default function TablesPage() {
     return () => clearInterval(id);
   }, []);
 
-  const closed = isClosedNow(now);
+  // Temporarily forced open for dev-byp testing outside operating hours —
+  // revert to `isClosedNow(now)` once testing wraps.
+  const closed = false;
 
   const tables = useMemo(
     () =>
