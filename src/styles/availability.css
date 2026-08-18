@@ -485,11 +485,10 @@ html.byp-hero-past .byp-hero-logo {
 .byp-sum-status-label {
   font-family: var(--font-oswald), sans-serif;
   font-weight: 600;
-  font-size: clamp(1.05rem, 2.5vw, 1.4rem);
+  font-size: clamp(1.7rem, 4.4vw, 2.5rem);
   text-transform: uppercase;
   letter-spacing: 0.01em;
-  line-height: 1.15;
-  max-width: 9.5ch;
+  line-height: 1.02;
   transition: color 600ms;
 }
 .byp-sum-divider-v {

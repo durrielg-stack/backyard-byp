@@ -835,13 +835,31 @@ function SummaryCard({
   let statusContent: React.ReactNode;
   if (summary.open) {
     const label =
-      summary.tone === "full"
-        ? "We're at Capacity"
-        : summary.tone === "almost"
-          ? "Party Vibes"
-          : summary.tone === "busy"
-            ? "Filling Up"
-            : "We're Open";
+      summary.tone === "full" ? (
+        <>
+          We&rsquo;re at
+          <br />
+          Capacity
+        </>
+      ) : summary.tone === "almost" ? (
+        <>
+          Party
+          <br />
+          Vibes
+        </>
+      ) : summary.tone === "busy" ? (
+        <>
+          Filling
+          <br />
+          Up
+        </>
+      ) : (
+        <>
+          We&rsquo;re
+          <br />
+          Open
+        </>
+      );
     statusContent = (
       <div className="byp-sum-number-row byp-sum-row-open">
         <span className="byp-sum-status-label">{label}</span>
