@@ -6,13 +6,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-`backyard-byp` is the standalone public-facing live-availability page for The Backyard Project bar + kitchen, served at `byp.theserverprojectph.cc`. It moved out of the `backyard-project-main` (POS) repo on 2026-08-16, where it used to live at `/public` behind a middleware host rewrite. See `memory-bank/project-overview.md` for the full split history.
+`backyard-byp` is the standalone public-facing live-availability page for The Backyard Project bar + kitchen, served at `byp.theserverprojectph.cc`. It moved out of the V1 POS repo (`backyard-project`, now `../POSv1`) repo on 2026-08-16, where it used to live at `/public` behind a middleware host rewrite. See `memory-bank/project-overview.md` for the full split history.
 
 It is a **single Next.js page** (`src/app/page.tsx`, ~1600 lines) — hero, live table grid (currently disabled, see below), busy-meter chart, menu, hours, gallery, location, footer — plus a Botpress webchat widget. No auth, no forms, no write paths. It reads two tables anonymously from the **same Supabase database** the POS app owns.
 
 **Read `memory-bank/` before scanning the repo:**
 
-1. `memory-bank/project-overview.md` — what the app is, the repo split, deploy target, relationship to `backyard-pos`
+1. `memory-bank/project-overview.md` — what the app is, the repo split, deploy target, relationship to the V1 POS (`../POSv1`, Vercel project `backyard-pos`)
 2. `memory-bank/architecture.md` — single-file structure map (section line ranges), styling, CSP, theme toggle
 3. `memory-bank/business-rules.md` — the availability state machine, hours/timezone logic, busy-meter math — all non-obvious and easy to break silently
 4. `memory-bank/changelog.md` — milestones since the repo was created
@@ -22,7 +22,7 @@ It is a **single Next.js page** (`src/app/page.tsx`, ~1600 lines) — hero, live
 This repo does **not** own its schema. It reads `restaurant_tables.{id,label,status}` and `orders.{table_id,opened_at,closed_at}` anonymously from the `backyard-project` (POS) Supabase database. See the contract comment in `src/lib/types.ts` and the nightly smoke test in `src/lib/schema-contract.test.ts` (also runs on every push).
 
 - A silent break here means no error, no crash — the page just renders wrong (blank grid, stuck "typical night" fallback, wrong status colors).
-- If you're touching `restaurant_tables` or `orders` from the **other** repo (`backyard-project-main`), check this repo's `schema-contract.test.ts` for what it depends on before renaming/removing a column or changing a `status` string value. Coordinate — don't assume this repo will tell you.
+- If you're touching `restaurant_tables` or `orders` from the **other** repo (the V1 POS, `../POSv1`), check this repo's `schema-contract.test.ts` for what it depends on before renaming/removing a column or changing a `status` string value. Coordinate — don't assume this repo will tell you.
 - If CI here starts failing on the daily 09:17 PHT schedule with no local change, schema drift from the POS repo is the first suspect.
 
 ## Commands
@@ -43,11 +43,11 @@ npm test              # Vitest — includes the schema-contract smoke test (hits
 
 Before claiming a change is done: `npm run typecheck && npm run lint && npm run format:check`. `npm run build` is the integration check.
 
-Unlike `backyard-project-main`, **this repo starts with zero pre-existing debt and lint is blocking from day one** — CI has no non-blocking carve-out here. `@typescript-eslint/no-explicit-any`, `react/no-danger`, `no-empty` (no bare `catch {}`), and `no-console` (warn/error only) are hard errors, not backlog. Don't introduce a single new violation.
+Unlike the V1 POS (`../POSv1`), **this repo starts with zero pre-existing debt and lint is blocking from day one** — CI has no non-blocking carve-out here. `@typescript-eslint/no-explicit-any`, `react/no-danger`, `no-empty` (no bare `catch {}`), and `no-console` (warn/error only) are hard errors, not backlog. Don't introduce a single new violation.
 
 ## Development process
 
-### Refactoring discipline (same rules as `backyard-project-main`)
+### Refactoring discipline (same rules as the V1 POS, `../POSv1`)
 
 - Refactors move code, they do not improve it. Zero behavior change per refactor commit; behavior changes travel separately.
 - Ambiguity resolves to the most boring option consistent with existing patterns — never novel architecture for a page this small.
