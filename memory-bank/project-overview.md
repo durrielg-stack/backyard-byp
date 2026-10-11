@@ -19,7 +19,7 @@ Confirmed decoupled via a live test: temporarily removing the Botpress widget fr
 
 ## Relationship to `backyard-pos` (the POS repo)
 
-- **Repo**: `durrielg-stack/backyard-project` (local path: `../backyard-project-main` relative to this repo, i.e. `Documents/Claude/BYP/backyard-project-main`)
+- **Repo**: `durrielg-stack/backyard-project` (local path: `../POSv1` in the Backyard ecosystem root since 2026-10-11; formerly `Documents/Claude/BYP/backyard-project-main`)
 - **This repo does not own the database schema.** It reads `restaurant_tables` and `orders` anonymously from the POS app's Supabase project. See the cross-repo contract section in `CLAUDE.md` and `src/lib/types.ts`.
 - Git branching model mirrors the POS repo: `main` = production, `dev` = staging, short-lived branches off `dev`.
 - The POS repo's `CLAUDE.md` documents its own full memory-bank system (17 files) — that's proportionate to a large POS app; this repo is a single page, so its memory-bank stays intentionally small (this file + `architecture.md` + `business-rules.md` + `changelog.md`).

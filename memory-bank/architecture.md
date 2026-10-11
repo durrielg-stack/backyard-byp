@@ -34,7 +34,7 @@ Approximate line ranges (Aug 2026; re-check before trusting a specific number, c
 | 442–505   | core types (`Status`, `TableRow`, `Summary`) + `mapStatus`/`isClosedNow`/`relTime`/`deriveSummary`                        |
 | 507–653   | inline SVG icon components (`Ic*`)                                                                                        |
 | 655–1073  | `SiteHeader`, `Hero`, `SummaryCard`, `BusyMeter`                                                                          |
-| 1073–1127 | `TableTile`, `Legend`, `TablesSection` (currently unrendered — see `CLAUDE.md` deferred state)                            |
+| 1073–1127 | `TableTile`, `Legend`, `TablesSection` (renders on Thursdays only, `isTableGridDay`)                                      |
 | 1128–1273 | `MenuSection`, `HoursSection`, `GallerySection`                                                                           |
 | 1273–1467 | `LocationSection`, `SiteFooter`, `MobileCTA`, `Lightbox`                                                                  |
 | 1468–1601 | `TablesPage` — the default export: state, effects (realtime subscription, 1s/90s tickers, theme persistence), render tree |
@@ -45,7 +45,7 @@ If you need to find something, grep for the function name — the section commen
 
 - No CSS modules, no Tailwind (not installed) — one global stylesheet, `availability.css`, imported directly in `page.tsx`.
 - Dark is the default look; `.byp-light` class on the root `<div className="byp-page">` switches to light-mode overrides. Toggled by `TablesPage`'s `theme` state, persisted to `localStorage` under `byp-theme`.
-- This is a **separate design system** from the POS app's `THEME` token object (`backyard-project-main/src/lib/theme.ts`). They are not meant to converge — the POS app is a fixed-kiosk dark-only display; this is a public page visited on arbitrary phones/desktops in either theme.
+- This is a **separate design system** from the POS app's `THEME` token object (`../POSv1/src/lib/theme.ts`). They are not meant to converge — the POS app is a staff tool (Material 3 dark/light with responsive layouts since 2026-10, no longer the fixed-kiosk dark-only display this note first described); this is a public page visited on arbitrary phones/desktops in either theme.
 
 ## Realtime & timers
 
