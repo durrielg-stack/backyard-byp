@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+**Scope:** the public site only. It sits in the Backyard ecosystem root (`../`) beside `POSv1/` (the POS whose database this site reads), `POSv2/`, `Bot/` and `references/`; ecosystem rules and memory are in `../CLAUDE.md` and `../.claude/`. POS rules do not apply here.
+
 ## What this is
 
 `backyard-byp` is the standalone public-facing live-availability page for The Backyard Project bar + kitchen, served at `byp.theserverprojectph.cc`. It moved out of the `backyard-project-main` (POS) repo on 2026-08-16, where it used to live at `/public` behind a middleware host rewrite. See `memory-bank/project-overview.md` for the full split history.
@@ -77,4 +79,5 @@ See `memory-bank/architecture.md` for the full section-by-section map of `page.t
 
 ## Known deferred state
 
+- **Superseded (2026-08-19, noted 2026-10-11):** `TablesSection` now renders on Thursdays only (`isTableGridDay`, `page.tsx`). The text below is the earlier state.
 - `TablesSection` (the live table grid) is **commented out** in `TablesPage` (`page.tsx`, near the bottom) — `{/* <TablesSection tables={tables} /> */}`. It moved here from the POS repo already disabled; restore when the bar gets busier. The data plumbing (`tables` derivation, realtime subscription) is still live and correct, only the render is off.
