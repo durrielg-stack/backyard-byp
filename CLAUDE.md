@@ -2,13 +2,13 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-**Scope:** the public site only. It sits in the Backyard ecosystem root (`../`) beside `POSv1/` (the POS whose database this site reads), `POSv2/`, `Bot/` and `references/`; ecosystem rules and memory are in `../CLAUDE.md` and `../.claude/`. POS rules do not apply here.
+**Scope:** the public site only. It sits in the Backyard ecosystem root (`../`) beside `POSv1/`, `POSv2/` (the POS whose database this site reads since 2026-10-13), `Bot/` and `references/`; ecosystem rules and memory are in `../CLAUDE.md` and `../.claude/`. POS rules do not apply here.
 
 ## What this is
 
 `backyard-byp` is the standalone public-facing live-availability page for The Backyard Project bar + kitchen, served at `byp.theserverprojectph.cc`. It moved out of the V1 POS repo (`backyard-project`, now `../POSv1`) repo on 2026-08-16, where it used to live at `/public` behind a middleware host rewrite. See `memory-bank/project-overview.md` for the full split history.
 
-It is a **single Next.js page** (`src/app/page.tsx`, ~1600 lines) — hero, live table grid (currently disabled, see below), busy-meter chart, menu, hours, gallery, location, footer — plus a Botpress webchat widget. No auth, no forms, no write paths. It reads two tables anonymously from the **same Supabase database** the POS app owns.
+It is a **single Next.js page** (`src/app/page.tsx`, ~1600 lines) — hero, live table grid (currently disabled, see below), busy-meter chart, menu, hours, gallery, location, footer — plus a Botpress webchat widget. No auth, no forms, no write paths. It reads two read-only views anonymously from the **V2 POS Supabase database** (`byp-pos-v2`).
 
 **Read `memory-bank/` before scanning the repo:**
 
@@ -19,10 +19,10 @@ It is a **single Next.js page** (`src/app/page.tsx`, ~1600 lines) — hero, live
 
 ## The cross-repo contract (read this first)
 
-This repo does **not** own its schema. It reads `restaurant_tables.{id,label,status}` and `orders.{table_id,opened_at,closed_at}` anonymously from the `backyard-project` (POS) Supabase database. See the contract comment in `src/lib/types.ts` and the nightly smoke test in `src/lib/schema-contract.test.ts` (also runs on every push).
+This repo does **not** own its schema. It reads `public_tables.{id,label,status}` and `public_table_occupancy.{table_id,opened_at,closed_at}` anonymously from the V2 POS (`byp-pos-v2`) Supabase database: two narrow views (V2 ADR-092; until 2026-10-13 it read V1's `restaurant_tables` and `orders`). See the contract comment in `src/lib/types.ts` and the nightly smoke test in `src/lib/schema-contract.test.ts` (also runs on every push).
 
 - A silent break here means no error, no crash — the page just renders wrong (blank grid, stuck "typical night" fallback, wrong status colors).
-- If you're touching `restaurant_tables` or `orders` from the **other** repo (the V1 POS, `../POSv1`), check this repo's `schema-contract.test.ts` for what it depends on before renaming/removing a column or changing a `status` string value. Coordinate — don't assume this repo will tell you.
+- If you're touching `public_tables` or `public_table_occupancy` from the **other** repo (the V2 POS, `../POSv2`), check this repo's `schema-contract.test.ts` for what it depends on before renaming/removing a column or changing a `status` string value. Coordinate — don't assume this repo will tell you.
 - If CI here starts failing on the daily 09:17 PHT schedule with no local change, schema drift from the POS repo is the first suspect.
 
 ## Commands
@@ -71,7 +71,7 @@ Unlike the V1 POS (`../POSv1`), **this repo starts with zero pre-existing debt a
 
 - **Next.js 15 App Router**, single route (`/`), client component (`"use client"` at the top of `page.tsx`).
 - **Styling**: `src/styles/availability.css` (~1500 lines), imported directly into `page.tsx`. Supports dark (default) and light mode via a `.byp-light` class toggled by `TablesPage`, persisted to `localStorage` (`byp-theme`). This is a genuinely separate styling system from the POS app's `THEME` token approach — don't try to reconcile them.
-- **Realtime**: Supabase `postgres_changes` subscription on `restaurant_tables` (channel `public-tables-v2`) plus a 1s ticker (relative time / countdown) and a 90s ticker (rotating status messages).
+- **Table states**: `public_tables` polled every 30 s and when the tab becomes visible (views cannot stream realtime changes), plus a 1s ticker (relative time / countdown) and a 90s ticker (rotating status messages).
 - **Security**: CSP is **enforced** (not report-only) in `next.config.ts` — this project's external-origin surface is small and fully enumerable (Supabase, Botpress, Vercel Insights/Fonts). If you add any new external script/font/connect source, update the CSP in the same change or the browser will silently block it.
 - **Analytics**: `@vercel/analytics` + `@vercel/speed-insights`, both wired in `layout.tsx`.
 
@@ -80,4 +80,4 @@ See `memory-bank/architecture.md` for the full section-by-section map of `page.t
 ## Known deferred state
 
 - **Superseded (2026-08-19, noted 2026-10-11):** `TablesSection` now renders on Thursdays only (`isTableGridDay`, `page.tsx`). The text below is the earlier state.
-- `TablesSection` (the live table grid) is **commented out** in `TablesPage` (`page.tsx`, near the bottom) — `{/* <TablesSection tables={tables} /> */}`. It moved here from the POS repo already disabled; restore when the bar gets busier. The data plumbing (`tables` derivation, realtime subscription) is still live and correct, only the render is off.
+- `TablesSection` (the live table grid) is **commented out** in `TablesPage` (`page.tsx`, near the bottom) — `{/* <TablesSection tables={tables} /> */}`. It moved here from the POS repo already disabled; restore when the bar gets busier. The data plumbing (`tables` derivation, polling) is still live and correct, only the render is off.

@@ -20,7 +20,7 @@ Confirmed decoupled via a live test: temporarily removing the Botpress widget fr
 ## Relationship to `backyard-pos` (the POS repo)
 
 - **Repo**: `durrielg-stack/backyard-project` (local path: `../POSv1` in the Backyard ecosystem root since 2026-10-11; formerly `Documents/Claude/BYP/backyard-project-main`)
-- **This repo does not own the database schema.** It reads `restaurant_tables` and `orders` anonymously from the POS app's Supabase project. See the cross-repo contract section in `CLAUDE.md` and `src/lib/types.ts`.
+- **This repo does not own the database schema.** Since 2026-10-13 it reads the `public_tables` and `public_table_occupancy` views anonymously from the V2 POS Supabase project (before that, V1's `restaurant_tables` and `orders`). See the cross-repo contract section in `CLAUDE.md` and `src/lib/types.ts`.
 - Git branching model mirrors the POS repo: `main` = production, `dev` = staging, short-lived branches off `dev`.
 - The POS repo's `CLAUDE.md` documents its own full memory-bank system (17 files) — that's proportionate to a large POS app; this repo is a single page, so its memory-bank stays intentionally small (this file + `architecture.md` + `business-rules.md` + `changelog.md`).
 
@@ -28,4 +28,4 @@ Confirmed decoupled via a live test: temporarily removing the Botpress widget fr
 
 - Vercel project, connected to `github.com/durrielg-stack/backyard-byp`.
 - `main` branch → production (`byp.theserverprojectph.cc`).
-- Env vars needed: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (same Supabase project as the POS app — anon/public key; this app only ever issues `.select()` calls, never writes, but verify RLS policies on `restaurant_tables`/`orders` in the Supabase project itself before assuming reads are the only thing the anon key can do).
+- Env vars needed: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (the V2 POS Supabase project — anon/public key; this app only ever issues `.select()` calls on two read-only views; anon has no access to V2's base tables).
