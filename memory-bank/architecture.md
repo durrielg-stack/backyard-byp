@@ -23,21 +23,21 @@ There is no component directory — everything is functions inside `page.tsx`, i
 
 Approximate line ranges (Aug 2026; re-check before trusting a specific number, code shifts):
 
-| Lines     | Section                                                                                                                   |
-| --------- | ------------------------------------------------------------------------------------------------------------------------- |
-| 1–6       | imports                                                                                                                   |
-| 7–9       | constants (Google Maps URL)                                                                                               |
-| 11–253    | `MSG` — rotating status-message pools, keyed by `AvailState`                                                              |
-| 254–294   | pre-open color interpolation (red→amber→green countdown accent)                                                           |
-| 296–390   | countdown text, availability state derivation, Manila-timezone helpers                                                    |
-| 392–440   | day-of-week rotating hero titles                                                                                          |
-| 442–505   | core types (`Status`, `TableRow`, `Summary`) + `mapStatus`/`isClosedNow`/`relTime`/`deriveSummary`                        |
-| 507–653   | inline SVG icon components (`Ic*`)                                                                                        |
-| 655–1073  | `SiteHeader`, `Hero`, `SummaryCard`, `BusyMeter`                                                                          |
-| 1073–1127 | `TableTile`, `Legend`, `TablesSection` (renders on Thursdays only, `isTableGridDay`)                                      |
-| 1128–1273 | `MenuSection`, `HoursSection`, `GallerySection`                                                                           |
-| 1273–1467 | `LocationSection`, `SiteFooter`, `MobileCTA`, `Lightbox`                                                                  |
-| 1468–1601 | `TablesPage` — the default export: state, effects (realtime subscription, 1s/90s tickers, theme persistence), render tree |
+| Lines     | Section                                                                                                           |
+| --------- | ----------------------------------------------------------------------------------------------------------------- |
+| 1–6       | imports                                                                                                           |
+| 7–9       | constants (Google Maps URL)                                                                                       |
+| 11–253    | `MSG` — rotating status-message pools, keyed by `AvailState`                                                      |
+| 254–294   | pre-open color interpolation (red→amber→green countdown accent)                                                   |
+| 296–390   | countdown text, availability state derivation, Manila-timezone helpers                                            |
+| 392–440   | day-of-week rotating hero titles                                                                                  |
+| 442–505   | core types (`Status`, `TableRow`, `Summary`) + `mapStatus`/`isClosedNow`/`relTime`/`deriveSummary`                |
+| 507–653   | inline SVG icon components (`Ic*`)                                                                                |
+| 655–1073  | `SiteHeader`, `Hero`, `SummaryCard`, `BusyMeter`                                                                  |
+| 1073–1127 | `TableTile`, `Legend`, `TablesSection` (renders on Thursdays only, `isTableGridDay`)                              |
+| 1128–1273 | `MenuSection`, `HoursSection`, `GallerySection`                                                                   |
+| 1273–1467 | `LocationSection`, `SiteFooter`, `MobileCTA`, `Lightbox`                                                          |
+| 1468–1601 | `TablesPage` — the default export: state, effects (table polling, 1s/90s tickers, theme persistence), render tree |
 
 If you need to find something, grep for the function name — the section comments (`/* ---- ... ---- */` and `/* ==== ... ==== */`) are reliable waypoints.
 
@@ -49,7 +49,7 @@ If you need to find something, grep for the function name — the section commen
 
 ## Realtime & timers
 
-- Supabase `postgres_changes` subscription on `restaurant_tables` (channel `public-tables-v2`), refetches the full table list on any change rather than patching incrementally.
+- Polls V2's `public_tables` view every 30 s (`TABLES_POLL_MS`) and when the tab becomes visible, refetching the full list; views cannot stream realtime changes. Until 2026-10-13 this was a `postgres_changes` subscription on V1's `restaurant_tables`.
 - 1-second `setInterval` drives `now` — relative "updated Xs ago" text and countdown text.
 - 90-second `setInterval` rotates through the `MSG` pool for the current `AvailState`, starting from a random offset (`msgTick` initialized via `Math.random()`) so page reloads don't all show the same message.
 - `BusyMeter` runs its own fetch (7-week lookback over `orders`) on mount and again on tab-visibility change — not on the 1s/90s tickers.

@@ -18,3 +18,4 @@ Major milestones in reverse-chronological order. See `git log` for full commit h
 ## 2026-08-18 — Documentation bootstrap
 
 - Added `CLAUDE.md` and this `memory-bank/` (this file, `project-overview.md`, `architecture.md`, `business-rules.md`) so an agent starting fresh in this repo has the same grounding available in `backyard-project-main`, scoped down to match this repo's much smaller surface area (one page vs. a full POS app).
+- 2026-10-13 — moved from V1's database to V2's: reads `public_tables` (polled every 30 s) and `public_table_occupancy` (busy meter) instead of `restaurant_tables`/`orders`; contract test follows (owner request; V2 ADR-092).

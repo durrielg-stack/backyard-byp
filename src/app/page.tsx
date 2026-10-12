@@ -368,6 +368,8 @@ const HOUR_SLOTS = [
 ];
 
 const MANILA_OFFSET_MS = 8 * 60 * 60 * 1000;
+// How often the table states refresh (V2 views do not stream realtime changes).
+const TABLES_POLL_MS = 30_000;
 
 function getManilaDateParts() {
   const d = new Date(Date.now() + MANILA_OFFSET_MS);
@@ -980,7 +982,7 @@ function BusyMeter({
         Date.UTC(oldest.year, oldest.month, oldest.day, 0) - MANILA_OFFSET_MS;
 
       const { data } = (await sb
-        .from("orders")
+        .from("public_table_occupancy")
         .select("table_id, opened_at, closed_at")
         .gte("opened_at", new Date(oldestStartUTC).toISOString())) as {
         data:
@@ -1518,7 +1520,7 @@ export default function TablesPage() {
     });
   }, []);
 
-  /* Supabase realtime */
+  /* Table states: V2's public_tables view, polled (views cannot stream realtime changes) */
   useEffect(() => {
     const sb = getClient();
     const PREFIX_ORDER: Record<string, number> = { T: 0, A: 1, B: 2, OT: 3 };
@@ -1531,29 +1533,30 @@ export default function TablesPage() {
         return ao !== bo ? ao - bo : parseInt(an, 10) - parseInt(bn, 10);
       });
 
-    sb.from("restaurant_tables")
-      .select("id, label, status")
-      .then(({ data }) => {
-        setRawTables(sortById(data ?? []));
-        setUpdatedAt(Date.now());
-      });
-    const ch = sb
-      .channel("public-tables-v2")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "restaurant_tables" },
-        () => {
-          sb.from("restaurant_tables")
-            .select("id, label, status")
-            .then(({ data }) => {
-              setRawTables(sortById(data ?? []));
-              setUpdatedAt(Date.now());
-            });
-        },
-      )
-      .subscribe();
+    let cancelled = false;
+    const load = () =>
+      sb
+        .from("public_tables")
+        .select("id, label, status")
+        .then(({ data, error }) => {
+          if (cancelled) return;
+          if (error) {
+            console.error("public_tables read failed", error);
+            return;
+          }
+          setRawTables(sortById(data ?? []));
+          setUpdatedAt(Date.now());
+        });
+    load();
+    const id = setInterval(load, TABLES_POLL_MS);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") load();
+    };
+    document.addEventListener("visibilitychange", onVisible);
     return () => {
-      sb.removeChannel(ch);
+      cancelled = true;
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", onVisible);
     };
   }, []);
 
