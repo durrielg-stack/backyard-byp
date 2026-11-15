@@ -1,11 +1,13 @@
 # CI — Backyard BYP (public tables page)
 #
 # This repo starts with zero pre-existing debt, so lint is blocking from
-# day one — unlike backyard-pos's CI, which runs lint non-blocking against
-# an inherited backlog. Also includes a daily schema-contract smoke test
-# (see src/lib/schema-contract.test.ts) since restaurant_tables/orders are
-# owned by the backyard-pos repo, not this one — drift there wouldn't
-# otherwise show up until someone notices the page is wrong.
+# day one. Pushes and PRs run the full pipeline. A weekly scheduled run
+# (owner, 2026-11-15) runs only the schema-contract smoke test
+# (src/lib/schema-contract.test.ts): public_tables and
+# public_table_occupancy are owned by the V2 POS (byp-pos-v2), not this
+# repo, so drift there wouldn't otherwise show up until someone notices
+# the page is wrong. The schedule skips the build and other checks so an
+# unrelated hiccup (e.g. Google Fonts) can't raise a false alarm.
 name: CI
 
 on:
@@ -13,11 +15,12 @@ on:
     branches: [main, dev]
   pull_request:
   schedule:
-    - cron: "17 1 * * *" # ~09:17 PHT daily — catches schema drift from the POS repo
+    - cron: "17 1 * * 1" # ~09:17 PHT Mondays — schema drift from the V2 POS
 
 jobs:
   verify:
     name: Typecheck, lint, format, unit tests, build
+    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,7 +42,7 @@ jobs:
       - name: Format check
         run: npm run format:check
 
-      - name: Unit tests (Vitest) — includes daily schema-contract smoke test
+      - name: Unit tests (Vitest) — includes the schema-contract smoke test
         run: npm test
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
@@ -47,6 +50,27 @@ jobs:
 
       - name: Production build
         run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+  schema-contract:
+    name: Schema contract (weekly)
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Schema-contract smoke test
+        run: npx vitest run src/lib/schema-contract.test.ts
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}

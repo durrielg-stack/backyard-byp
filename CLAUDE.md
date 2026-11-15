@@ -19,11 +19,11 @@ It is a **single Next.js page** (`src/app/page.tsx`, ~1600 lines) — hero, live
 
 ## The cross-repo contract (read this first)
 
-This repo does **not** own its schema. It reads `public_tables.{id,label,status}` and `public_table_occupancy.{table_id,opened_at,closed_at}` anonymously from the V2 POS (`byp-pos-v2`) Supabase database: two narrow views (V2 ADR-092; until 2026-10-13 it read V1's `restaurant_tables` and `orders`). See the contract comment in `src/lib/types.ts` and the nightly smoke test in `src/lib/schema-contract.test.ts` (also runs on every push).
+This repo does **not** own its schema. It reads `public_tables.{id,label,status}` and `public_table_occupancy.{table_id,opened_at,closed_at}` anonymously from the V2 POS (`byp-pos-v2`) Supabase database: two narrow views (V2 ADR-092; until 2026-10-13 it read V1's `restaurant_tables` and `orders`). See the contract comment in `src/lib/types.ts` and the weekly smoke test in `src/lib/schema-contract.test.ts` (also runs on every push).
 
 - A silent break here means no error, no crash — the page just renders wrong (blank grid, stuck "typical night" fallback, wrong status colors).
 - If you're touching `public_tables` or `public_table_occupancy` from the **other** repo (the V2 POS, `../POSv2`), check this repo's `schema-contract.test.ts` for what it depends on before renaming/removing a column or changing a `status` string value. Coordinate — don't assume this repo will tell you.
-- If CI here starts failing on the daily 09:17 PHT schedule with no local change, schema drift from the POS repo is the first suspect.
+- If CI here starts failing on the weekly (Monday 09:17 PHT) schedule with no local change, schema drift from the POS repo is the first suspect.
 
 ## Commands
 

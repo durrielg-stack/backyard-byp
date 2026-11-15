@@ -11,7 +11,7 @@ src/
   lib/
     supabase.ts     — anonymous read-only client singleton
     types.ts        — cross-repo schema contract (see CLAUDE.md)
-    schema-contract.test.ts — nightly + every-push guard against schema drift
+    schema-contract.test.ts — weekly + every-push guard against schema drift
   styles/
     availability.css — ~1500 lines, all styling for this page (dark + light via .byp-light)
 public/              — logos, gallery photos, hero image, menu images (static, this repo owns copies independent of the POS repo)
