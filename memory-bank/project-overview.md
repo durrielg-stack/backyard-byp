@@ -13,7 +13,7 @@ Originally this page lived at `src/app/public/page.tsx` in the POS repo (`backya
 Why split:
 
 - The public page and the POS app have completely different audiences, risk profiles, and deploy cadences. Bundling them meant every POS deploy risked the public page and vice versa.
-- Separating let this repo have its own CSP posture (enforced, not report-only — see `memory-bank/architecture.md`), its own clean lint baseline, and its own CI schedule (including the nightly schema-drift smoke test).
+- Separating let this repo have its own CSP posture (enforced, not report-only — see `memory-bank/architecture.md`), its own clean lint baseline, and its own CI schedule (including the weekly schema-drift smoke test; daily until 2026-11-15).
 
 Confirmed decoupled via a live test: temporarily removing the Botpress widget from the POS repo's (then still-live) copy had zero effect on the actual live domain, proving `byp.theserverprojectph.cc` was already being served from here before the old copy was deleted.
 

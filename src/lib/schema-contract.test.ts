@@ -1,4 +1,4 @@
-// Nightly + every-push guard against schema drift in the Backyard POS
+// Weekly + every-push guard against schema drift in the Backyard POS
 // V2 database views, which this repo reads anonymously but does not own. See the
 // cross-repo contract comment in ./types.ts. A failure here means someone
 // changed public_tables or public_table_occupancy in a way that would silently break

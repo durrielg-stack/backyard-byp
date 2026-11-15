@@ -6,7 +6,7 @@
 // Renaming/removing a column, or adding a `status` value, breaks this page silently —
 // no error, no crash, tables just render wrong. Coordinate with
 // durrielg-stack/byp-pos-v2 before altering either view. See
-// src/lib/schema-contract.test.ts, which checks this nightly.
+// src/lib/schema-contract.test.ts, which checks this weekly and on every push.
 
 // V2 derives occupancy from an open order; `pending_payment` was V1-only and is kept so
 // mapStatus stays total.
