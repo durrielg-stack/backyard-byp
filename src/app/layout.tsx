@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Oswald, Hanken_Grotesk } from "next/font/google";
-import Script from "next/script";
+import { BotpressWebchat } from "./botpress-webchat";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -41,14 +41,7 @@ export default function RootLayout({
     <html lang="en" className={`${oswald.variable} ${hankenGrotesk.variable}`}>
       <body>
         {children}
-        <Script
-          src="https://cdn.botpress.cloud/webchat/v3.7/inject.js"
-          strategy="afterInteractive"
-        />
-        <Script
-          src="https://files.bpcontent.cloud/2026/08/05/13/20260805131439-DNGLV32O.js"
-          strategy="afterInteractive"
-        />
+        <BotpressWebchat />
         <Analytics />
         <SpeedInsights />
       </body>
