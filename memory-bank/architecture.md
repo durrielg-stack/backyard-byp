@@ -5,7 +5,7 @@
 ```
 src/
   app/
-    layout.tsx     — root layout: fonts (Oswald + Hanken Grotesk), Botpress scripts, Analytics/SpeedInsights
+    layout.tsx     — root layout: fonts (Oswald + Hanken Grotesk), Botpress webchat (botpress-webchat.tsx: config script loads only after inject.js is ready), Analytics/SpeedInsights
     page.tsx        — the entire app (~1600 lines), single default export TablesPage
     icon.svg
   lib/

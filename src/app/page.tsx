@@ -1,6 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+  useSyncExternalStore,
+} from "react";
 import { getClient } from "@/lib/supabase";
 import "@/styles/availability.css";
 
@@ -1496,7 +1503,22 @@ function Lightbox({
 /* ============================================================
    ROOT PAGE
    ============================================================ */
+// False while prerendering and during hydration, true on every client render
+// after it. The page is driven by the visitor's clock (hero title, countdowns,
+// open/closed, busy meter) and a random message index, so the build-time HTML
+// can never match the first client render; rendering it anyway raised React
+// error #418 and forced a full client re-render on every visit.
+const noopSubscribe = () => () => {};
+function useHydrated() {
+  return useSyncExternalStore(
+    noopSubscribe,
+    () => true,
+    () => false,
+  );
+}
+
 export default function TablesPage() {
+  const hydrated = useHydrated();
   const [rawTables, setRawTables] = useState<TableRow[]>([]);
   const [updatedAt, setUpdatedAt] = useState(Date.now());
   const [now, setNow] = useState(new Date());
@@ -1600,6 +1622,16 @@ export default function TablesPage() {
   // Derived from `now` (ticks every second) so it updates automatically when
   // the 30-minute slot boundary is crossed, without needing its own interval.
   const heroTitle = useMemo(() => getHeroTitle(now), [now]);
+
+  if (!hydrated) {
+    return (
+      <div
+        className="byp-page"
+        aria-busy="true"
+        style={{ minHeight: "100vh" }}
+      />
+    );
+  }
 
   return (
     <div className={"byp-page" + (theme === "light" ? " byp-light" : "")}>
